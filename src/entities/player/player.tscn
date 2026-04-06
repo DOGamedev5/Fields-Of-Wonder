@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://cop3p8eoomdmp"]
+
+[ext_resource type="Script" uid="uid://bbriws6ubssu0" path="res://src/entities/player/player.gd" id="1_vt6n5"]
+[ext_resource type="Texture2D" uid="uid://bk2f30vri1btx" path="res://src/entities/player/lodrofo/IDLE/lodrofoIdle.png" id="2_vt6n5"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_s8n7f"]
+radius = 7.0
+height = 20.0
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_vt6n5"]
+points = PackedVector2Array(0, 0, -5, -13, 5, -13)
+
+[sub_resource type="Animation" id="Animation_vt6n5"]
+resource_name = "idle"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_muk8e"]
+_data = {
+&"idle": SubResource("Animation_vt6n5")
+}
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_wrxq6"]
+
+[node name="Player" type="CharacterBody2D" unique_id=997417864]
+floor_stop_on_slope = false
+floor_constant_speed = true
+floor_block_on_wall = false
+floor_snap_length = 8.0
+script = ExtResource("1_vt6n5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=772138552]
+position = Vector2(0, -21)
+shape = SubResource("CapsuleShape2D_s8n7f")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="." unique_id=144601491]
+shape = SubResource("ConvexPolygonShape2D_vt6n5")
+metadata/_edit_lock_ = true
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=637462412]
+position = Vector2(1, -48)
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="gizmo" type="Node2D" parent="." unique_id=1212761492]
+
+[node name="sprite" type="Sprite2D" parent="gizmo" unique_id=971404867]
+position = Vector2(0, -16)
+texture = ExtResource("2_vt6n5")
+hframes = 23
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=386876422]
+root_node = NodePath("../AnimationTree")
+libraries/ = SubResource("AnimationLibrary_muk8e")
+
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=1819832535]
+root_node = NodePath(".")
+tree_root = SubResource("AnimationNodeStateMachine_wrxq6")
+anim_player = NodePath("../AnimationPlayer")

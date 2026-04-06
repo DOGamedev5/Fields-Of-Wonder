@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://mwhnyk1gv7xq"]
+
+[sub_resource type="Gradient" id="Gradient_yl16k"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.6355769, 0.9971154)
+colors = PackedColorArray(0.6879222, 0.83463544, 0.74620557, 1, 0.7147978, 0.74509805, 0.5764706, 1, 0.87, 0.54491, 0.35670003, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_mlbve"]
+gradient = SubResource("Gradient_yl16k")
+fill_to = Vector2(0, 1)
+metadata/_snap_enabled = true
+
+[node name="Background" type="Node2D" unique_id=1185266162]
+
+[node name="Parallax2D" type="Parallax2D" parent="." unique_id=973493833]
+z_index = -1
+scroll_offset = Vector2(-832, 0)
+repeat_size = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=1326812934]
+position = Vector2(575.99994, 328.00003)
+scale = Vector2(17.999998, 10.25)
+texture = SubResource("GradientTexture2D_mlbve")
