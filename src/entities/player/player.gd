@@ -1,54 +1,49 @@
-extends CharacterBody2D
+extends PlayerBase
 
-const SPEED =  300.0
-const JUMP_VELOCITY = -400.0
-@onready var spriteGizmo := $gizmo
+@onready var stateMachine := $StateMachine
+@onready var sprite := $gizmo/sprite
+@onready var animationTree := $AnimationTree
+@onready var animationTreePlayback : AnimationNodeStateMachinePlayback = animationTree["parameters/playback"]
+
+@onready var coyoteTimer := $CoyoteTimer
+@onready var jumpBufferTimer := $JumpBuffer
+
+var shouldWalk := false
+var jumpBuffer := false
+var coyoteTime := false
+
+func _ready() -> void:
+	stateMachine.init("IDLE")
+
+func move(delta):
+	var direction := Input.get_axis("ui_left", "ui_right")
+	var force := 300
+	if sign(velocity.x) != sign(direction):
+		force = 600
+	velocity.x = move_toward(velocity.x, maxSpeed*direction, delta*force)
+
+func shouldJump():
+	return jumpBuffer and (is_on_floor() or coyoteTime)
 
 func _physics_process(delta: float) -> void:
-	# Add the gravity.
-	if not is_on_floor():
-		velocity.y += 800 *  delta
+	if Input.is_action_pressed("jump"):
+		jumpBuffer = true
+		jumpBufferTimer.start()
 	
+	stateMachine.process(delta)
+	
+	gravity(delta)
+	sprite.flip_h = shouldFlip(sprite.flip_h)
 	rotateSprite(delta)
-
-	# Handle jump.
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction := Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
 	
+	var onFloor := is_on_floor()
 	move_and_slide()
+	if is_on_floor() == false and onFloor:
+		coyoteTimer.start()
+		coyoteTime = true
+		
+func _on_coyote_timer_timeout() -> void:
+	coyoteTime = false
 
-func rotateNormal(delta):
-	var floorNormal : Vector2 = get_floor_normal()
-	
-	if not is_on_floor():
-		floorNormal.x = clamp((velocity.x / (SPEED)), -0.2, 0.2)
-		floorNormal.y = -(1 - abs(floorNormal.x))
-		if velocity.y > 0: floorNormal.x *= -1
-	
-	#if not onFloor() and (running or isRolling):
-	#	floorNormal = Vector2(sin(motion.angle()), cos(motion.angle()))
-	
-	return floorNormal
-
-func rotateSprite(delta):
-	var floorNormal : Vector2 = rotateNormal(delta)
-	var weight := 20
-	
-	var angle : float = max(min(atan2(float(floorNormal.x), -float(floorNormal.y)), deg_to_rad(45)), deg_to_rad(-45))
-	if not is_on_floor():
-		weight = 10
-	
-		#if running or isRolling:
-			#angle = motion.angle()
-			#if motion.x < 0:
-				#angle += PI
-	
-	spriteGizmo.rotation = lerp_angle(spriteGizmo.rotation, angle, weight * delta)
+func _on_jump_buffer_timeout() -> void:
+	jumpBuffer = false
