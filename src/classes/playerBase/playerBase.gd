@@ -8,7 +8,8 @@
 
 func gravity(delta):
 	if not is_on_floor():
-		velocity.y += min((gravityForce) *  delta, 300)
+		velocity.y += gravityForce *  delta
+		velocity.y = min(velocity.y, maxFall)
 
 func getRotationNormal():
 	var floorNormal : Vector2 = get_floor_normal()
@@ -31,11 +32,6 @@ func rotateSprite(delta):
 	var angle : float = max(min(atan2(float(floorNormal.x), -float(floorNormal.y)), deg_to_rad(45)), deg_to_rad(-45))
 	if not is_on_floor():
 		weight = 10
-	
-		#if running or isRolling:
-			#angle = motion.angle()
-			#if motion.x < 0:
-				#angle += PI
 	
 	spriteGizmo.rotation = lerp_angle(spriteGizmo.rotation, angle, weight * delta)
 

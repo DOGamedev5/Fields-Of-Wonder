@@ -18,6 +18,6 @@ scroll_offset = Vector2(-832, 0)
 repeat_size = Vector2(1152, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=1326812934]
-position = Vector2(575.99994, 328.00003)
+position = Vector2(256.00003, 320.00003)
 scale = Vector2(17.999998, 10.25)
 texture = SubResource("GradientTexture2D_mlbve")
